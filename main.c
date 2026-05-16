@@ -18,12 +18,37 @@ int tokenize(char *line, char **argv) {
     return i;
 }
 
+int execute(char **argv, int args) {
+    if (args < 1) return 0;
+    char *cmd = argv[0];
+
+    if (strcmp(cmd, "cd") == 0) {
+        if (argv[1] == NULL)
+            chdir(getenv("HOME"));
+        else
+            chdir(argv[1]);
+    } else if (strcmp(cmd, "exit") == 0) {
+        exit(0);
+    } else {
+        int pid = fork();
+        if (pid == 0) {
+            execvp(cmd, argv);
+        } else {
+            waitpid(pid, NULL, 0);
+        }
+    }
+
+    return 0;
+}
+
 int main(void) {
     char line[MAX_INPUT];
     char *args[MAX_ARGS]; // pointers to line
+    char cwd[1024];
 
     while (1) {
-        printf("$ ");
+        getcwd(cwd, sizeof(cwd));
+        printf("[%s]$ ", cwd);
         fflush(stdout);
 
         fgets(line, MAX_INPUT, stdin);
@@ -35,5 +60,7 @@ int main(void) {
             printf("%s, ", args[i]);
         }
         printf("\n");
+
+        execute(args, tokens);
     }
 }
