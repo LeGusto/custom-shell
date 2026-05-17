@@ -33,8 +33,15 @@ int execute(char **argv, int args) {
         int pid = fork();
         if (pid == 0) {
             execvp(cmd, argv);
+            perror(cmd);
+            exit(1);
         } else {
-            waitpid(pid, NULL, 0);
+            int status;
+            waitpid(pid, &status, 0);
+            if (WIFEXITED(status))
+                printf("[exited %d]\n", WEXITSTATUS(status));
+            else if (WIFSIGNALED(status))
+                printf("[killed by signal %d]\n", WTERMSIG(status));
         }
     }
 
