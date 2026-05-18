@@ -6,13 +6,13 @@
 
 int MAX_INPUT = 124;
 int MAX_ARGS = 8;
+char *delim = " \t\n";
 
 int tokenize(char *line, char **argv) {
+    char *ptr = line;
     int i = 0;
-    argv[i] = strtok(line, " \t\n");
-    while (argv[i] != NULL && i < MAX_ARGS - 1) {
-        argv[++i] = strtok(NULL, " \t\n"); 
-        // NULL lets it continue where it left off
+    while ((argv[i] = strsep(&ptr, delim)) != NULL && i < MAX_ARGS - 1) {
+        if (argv[i][0] != '\0') i++;  // skip empty tokens
     }
 
     return i;
