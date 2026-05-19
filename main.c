@@ -7,11 +7,22 @@
 int MAX_INPUT = 124;
 int MAX_ARGS = 8;
 char *delim = " \t\n";
+char *split_delim = "|"
 
 int tokenize(char *line, char **argv) {
     char *ptr = line;
     int i = 0;
     while ((argv[i] = strsep(&ptr, delim)) != NULL && i < MAX_ARGS - 1) {
+        if (argv[i][0] != '\0') i++;  // skip empty tokens
+    }
+
+    return i;
+}
+
+int split(char *line, char **argv) {
+    char *ptr = line;
+    int i = 0;
+    while ((argv[i] = strsep(&ptr, split_delim)) != NULL && i < MAX_ARGS - 1) {
         if (argv[i][0] != '\0') i++;  // skip empty tokens
     }
 
@@ -48,8 +59,11 @@ int execute(char **argv, int args) {
     return 0;
 }
 
+
+
 int main(void) {
     char line[MAX_INPUT];
+    char *cmds[MAX_INPUT];
     char *args[MAX_ARGS]; // pointers to line
     char cwd[1024];
 
@@ -61,13 +75,17 @@ int main(void) {
         fgets(line, MAX_INPUT, stdin);
         // printf("%s", line);
 
-        int tokens = tokenize(line, args);
-        printf("%d tokens\n", tokens);
-        for (int i = 0; i < tokens; i++) {
-            printf("%s, ", args[i]);
-        }
-        printf("\n");
+        int cmds = split(line, cmds);
 
-        execute(args, tokens);
+        for (int i = 0; i < cmds; i++) {
+            int tokens = tokenize(line, args);
+            printf("%d tokens\n", tokens);
+            for (int i = 0; i < tokens; i++) {
+                printf("%s, ", args[i]);
+            }
+            printf("\n");
+
+            execute(args, tokens);
+        }
     }
 }
