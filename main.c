@@ -55,6 +55,7 @@ int tokenize(char *line, char **args) {
 
 void process_cmds(char **cmds, int tot_cmds) {
     if (tot_cmds == 0) return;
+    if (tot_cmds == 1 && strcmp(cmds[0], "exit") == 0) exit(0);
 
     char *args[MAX_ARGS];
 
