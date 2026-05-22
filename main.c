@@ -99,7 +99,8 @@ void process_cmds(char **cmds, int tot_cmds) {
 }
 
 char* get_cmds(char *line, char **cmds) {
-    fgets(line, MAX_INPUT, stdin);
+    if (fgets(line, MAX_INPUT, stdin) == NULL) { printf("\n"); exit(0); }
+
     char* start = strip(line);
 
     int tot_cmds = format_piped(start, cmds);
