@@ -57,6 +57,18 @@ void process_cmds(char **cmds, int tot_cmds) {
     if (tot_cmds == 0) return;
     if (tot_cmds == 1 && strcmp(cmds[0], "exit") == 0) exit(0);
 
+    if (tot_cmds == 1) {
+        char *args[MAX_ARGS];
+        char tmp[1024];
+        strncpy(tmp, cmds[0], sizeof(tmp) - 1);
+        tokenize(tmp, args);
+        if (args[0] && strcmp(args[0], "cd") == 0) {
+            char *dir = args[1] ? args[1] : getenv("HOME");
+            if (chdir(dir) < 0) perror(dir);
+            return;
+        }
+    }
+
     char *args[MAX_ARGS];
 
     int tokens = 0;
